@@ -1,0 +1,2 @@
+sudo find /home/don/data -type d -exec chmod 777 {} \;
+sudo find /home/don/data -type f -exec chmod 666 {} \;

@@ -1,4 +1,8 @@
+# Local
+*.txt
+
 # Logs
+*.err
 logs
 *.log
 npm-debug.log*
