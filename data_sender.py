@@ -65,8 +65,8 @@ def to_yyyymmddhh(dt):
 def to_json(sample_date, moisture, temp_east, temp_west, temp_rpi):
   return ('{"sample_date": ' + to_nvl(sample_date) + ',' + \
           ' "moisture": '    + to_nvl(moisture)    + ',' + \
-          ' "temp_east": '   + to_nvl(temp_air_east)   + ',' + \
-          ' "temp_west": '   + to_nvl(temp_air_west)   + ',' + \
+          ' "temp_east": '   + to_nvl(temp_east)   + ',' + \
+          ' "temp_west": '   + to_nvl(temp_west)   + ',' + \
           ' "temp_rpi": '    + to_nvl(temp_rpi)    + '}\n')
 
 def to_nvl(value):
