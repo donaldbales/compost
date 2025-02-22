@@ -1,10 +1,12 @@
 #!/home/don/python/bin/python3
 
 from datetime import datetime
+from email.message import EmailMessage
 import os
 from pathlib import Path
 import RPi.GPIO as GPIO
 import subprocess
+import smtplib
 import sys
 import time
 
@@ -103,6 +105,24 @@ def read_temp(thermometer):
         temp_c = round(float(temp_string) / 1000.0, 2)
         temp_f = round((temp_c * 9.0 / 5.0) + 32.0, 2)
         return temp_c, temp_f
+
+def send_notification(body):
+    message = EmailMessage()
+    message.set_content(body)
+    message['Subject'] = "raspberrypi-3-compost Alert"
+    message['From'] = 'don@donaldbales.com'
+    message['To'] = 'donaldbales@mac.com'
+    # creates SMTP session
+    connection = smtplib.SMTP('netsol-smtp-oxcs.hostingplatform.com', 587)
+    # start TLS for security
+    connection.starttls()
+    # Authentication
+    connection.login("don@donaldbales.com", os.getenv('EMAIL_PASSWORD', ''))
+    # sending the mail
+    connection.sendmail("don@donaldbales.com", "donaldbales@mac.com", message.as_string())
+    # terminating the session
+    connection.quit()
+    return True
 
 def write_data(dt, data):
     data_path = Path(ymd_path(dt))

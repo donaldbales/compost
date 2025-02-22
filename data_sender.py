@@ -19,10 +19,12 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 from datetime import datetime
+from email.message import EmailMessage
 from urllib.error import HTTPError, URLError
 from urllib.request import urlopen, Request
 import json
 import os
+import smtplib
 import sys
 import time
 
@@ -54,6 +56,24 @@ def dot_sent():
     str(dt.hour).rjust(2, '0') + \
     str(dt.minute).rjust(2, '0') + \
     str(dt.second).rjust(2, '0'))
+
+def send_notification(body):
+    message = EmailMessage()
+    message.set_content(body)
+    message['Subject'] = "raspberrypi-3-compost Alert"
+    message['From'] = 'don@donaldbales.com'
+    message['To'] = 'donaldbales@mac.com'
+    # creates SMTP session
+    connection = smtplib.SMTP('netsol-smtp-oxcs.hostingplatform.com', 587)
+    # start TLS for security
+    connection.starttls()
+    # Authentication
+    connection.login("don@donaldbales.com", os.getenv('EMAIL_PASSWORD', ''))
+    # sending the mail
+    connection.sendmail("don@donaldbales.com", "donaldbales@mac.com", message.as_string())
+    # terminating the session
+    connection.quit()
+    return True
 
 def to_yyyymmddhh(dt):
   return ( \
@@ -121,6 +141,8 @@ while True:
                 else:
                   err('Response error.status: ' + str(error.status))
                   err('Response error.reason: ' + str(error.reason))
+                  send_notification('Response error.status: ' + str(error.status) + "\n" + \
+                                    'Response error.reason: ' + str(error.reason))
               except URLError as error:
                 err(error.reason)
               except TimeoutError:
